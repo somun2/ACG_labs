@@ -5,7 +5,7 @@
  
 Clone and initialize the repository (you can do it via [Git](https://git-scm.com/downloads/win) or using [GitHub Desktop](https://desktop.github.com/download/)):
 ```
-git clone --recurse-submodules -j8 https://github.com/somun2/ACG_lab1.git
+git clone --recurse-submodules -j8 https://github.com/somun2/ACG_labs.git
 ```
 
 The framework provided is compatible with all operating systems.
