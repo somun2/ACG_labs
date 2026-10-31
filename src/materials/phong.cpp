@@ -21,7 +21,7 @@ Vector3D Phong::getReflectance(const Vector3D& n, const Vector3D& wo,
 
     Vector3D r = rho_d / pi;
     if (x > 0.0) {
-        r += Ks * pow(x, alpha);
+        r += ((alpha +2)/(2*pi))*Ks * pow(x, alpha);
     }
 
     return r;
