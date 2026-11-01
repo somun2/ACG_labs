@@ -6,7 +6,6 @@
 #include "../core/hemisphericalsampler.h"
 #include "../materials/phong.h"
 #include <iostream>
-#include <random>
 #include <cmath>
 
 
@@ -93,8 +92,6 @@ Vector3D AreaShader::computeColor(const Ray& r, const std::vector<Shape*>& objLi
 
     Vector3D Lo = Vector3D(0.0, 0.0, 0.0);
 
-    static thread_local std::mt19937 gen(std::random_device{}());
-    std::uniform_real_distribution<double> dist(0.0, 1.0);
     HemisphericalSampler sampler;
 
     for (size_t lsIndex = 0; lsIndex < lsList.size(); lsIndex++) {
@@ -108,18 +105,15 @@ Vector3D AreaShader::computeColor(const Ray& r, const std::vector<Shape*>& objLi
 
             if (Utils::getClosestIntersection(r, objList, itst) && itst.shape->getMaterial().isEmissive()) {
                 Li = itst.shape->getMaterial().getEmissiveRadiance();
-				//printf("Li: %f, %f, %f\n", Li.x, Li.y, Li.z);
             }
             else {
 				Li = Vector3D(0.0, 0.0, 0.0);
             }
 
             double Gxy = (max(0.0,dot(wi, n)) * max(0.0,dot(-wi, lsList.at(lsIndex)->getNormal())))/((randLigPos - its.itsPoint).length() * (randLigPos - its.itsPoint).length());
-			//printf("Gxy: %f\n", max(0.0, dot(-wi, n)));
             double wi_n = dot(wi, n);
             Vector3D brdf = its.shape->getMaterial().getReflectance(n, wo, wi);
             Lo += Li * brdf * wi_n * Gxy;
-			//printf("Lo: %f, %f, %f\n", Lo.x, Lo.y, Lo.z);
         }
     }
     double at = 0.2;

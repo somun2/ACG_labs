@@ -21,6 +21,8 @@
 #include "shaders/whittedshader.h"
 #include "shaders/directshader.h"
 #include "shaders/areashader.h"
+#include "shaders/pureshader.h"
+#include "shaders/neeshader.h"
 
 #include "materials/phong.h"
 #include "materials/emissive.h"
@@ -172,11 +174,16 @@ void raytrace(Camera* &cam, Shader* &shader, Film* &film,
             double x = (double)(col + 0.5) / resX;
             double y = (double)(lin + 0.5) / resY;
             // Generate the camera ray
-            Ray cameraRay = cam->generateRay(x, y);
+            
             Vector3D pixelColor = Vector3D(0.0);
-
+            double N = 256.0;
             // Compute ray color according to the used shader
-            pixelColor += shader->computeColor(cameraRay, *objectsList, *lightSourceList);
+			for (int i = 0; i < N; i++) {
+                Ray cameraRay = cam->generateRay(x, y);
+				pixelColor += shader->computeColor(cameraRay, *objectsList, *lightSourceList);
+				//printf("Pixel color: %f, %f, %f\n", pixelColor.x, pixelColor.y, pixelColor.z);
+			}
+			pixelColor /= N;
 
             // Store the pixel color
             film->setPixelValue(col, lin, pixelColor);
@@ -235,6 +242,8 @@ int main()
 	Shader* whittedshader = new WhittedShader(bgColor);
 	Shader* directshader = new DirectShader(bgColor);
 	Shader* areaShader = new AreaShader(bgColor);
+	Shader* pureShader = new PureShader(bgColor);
+	Shader* neeShader = new NEEShader(bgColor);
 
   
 
@@ -259,7 +268,9 @@ int main()
     //raytrace(cam, normalshader, film, myScene.objectsList, myScene.LightSourceList);
     //raytrace(cam, whittedshader, film, myScene.objectsList, myScene.LightSourceList);
 	//raytrace(cam, directshader, film, myScene.objectsList, myScene.LightSourceList);
-	raytrace(cam, areaShader, film, myScene.objectsList, myScene.LightSourceList);
+	//raytrace(cam, areaShader, film, myScene.objectsList, myScene.LightSourceList);
+	//raytrace(cam, pureShader, film, myScene.objectsList, myScene.LightSourceList);
+	raytrace(cam, neeShader, film, myScene.objectsList, myScene.LightSourceList);
     auto stop = high_resolution_clock::now();
 
     Vector3D camPos = cam->cameraToWorld.transformPoint(Vector3D(0.0, 0.0, 0.0));
